@@ -9,5 +9,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "semi": ["error", "always"],  // Forzar el uso de punto y coma
+        "@typescript-eslint/semi": ["error", "always"]  // Regla específica para TypeScript
     }
 }
