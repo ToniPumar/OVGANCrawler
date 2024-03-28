@@ -2,11 +2,12 @@
   "name": "ovgancrawler",
   "version": "1.0.0",
   "description": "Funciones básicas de login, altas, bajas, declaraciónes de movimientos de la web de OVGAN de la Xunta de Galicia.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel ./src/index.js",
-     "build": "parcel ./src/index.js"
+    "start": "parcel serve ./src/index.ts",
+    "compile":"tsc",
+    "build": "parcel build ./src/index.ts"
   },
   "keywords": [
     "OVGAN"
