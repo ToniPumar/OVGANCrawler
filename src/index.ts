@@ -56,4 +56,4 @@ async function ovgan (user: string = '', password: string = '', act: Accion = Ac
   return [Error.NOERROR, 'd'];
 }
 
-void ovgan('76347101G', 'SRKWYK', Accion.LOGIN);
+void ovgan('', '', Accion.LOGIN);
