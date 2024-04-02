@@ -18,7 +18,8 @@ enum Error {
   URLLOGIN, // ERRO NA URL DO LOGIN
   URLPRINCIPAL, // ERRO NA URL PRINCIPAL
   ERRORELEMNTOSLOGIN, // ERROR CAPTURANDO OS ELMENTOS DO LOGIN
-  LOGIN // ERRO O FACER LONGIN
+  LOGIN, // ERRO O FACER LONGIN
+  ERRORINFOUSUARIO
 }
 
 enum URLS {
@@ -31,10 +32,10 @@ enum URLS {
 async function ovgan (user: string = '', password: string = '', act: Accion = Accion.LOGIN): Promise<[Error, string]> {
   const navegador: Browser = await puppeteer.launch({ headless: false });
   const pagina: Page = await navegador.newPage();
-  const response: HTTPResponse | null = await pagina.waitForResponse(URLS.LOGIN);
+  const response: HTTPResponse | null = await pagina.goto(URLS.LOGIN);
 
   if (response == null || response.status() !== 200) {
-    return [Error.URLLOGIN, ''];
+    return [Error.URLLOGIN, 'Error entrando en login'];
   }
 
   // Capturamos botones de login y enviamos peticion
@@ -43,36 +44,51 @@ async function ovgan (user: string = '', password: string = '', act: Accion = Ac
   const btnEnviar: ElementHandle<Element> | null = await pagina.$('#botonentrarlogin');
 
   if (username == null || pass == null || btnEnviar == null) {
-    return [Error.ERRORELEMNTOSLOGIN, ''];
+    await navegador.close();
+    return [Error.ERRORELEMNTOSLOGIN, 'Error capturando elementos do login'];
   }
 
   await username.click();
   await username.type(user);
+  await new Promise(resolve => setTimeout(resolve, 3000));
   await pass.click();
   await pass.type(password);
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  await btnEnviar.focus();
   await btnEnviar.click();
+  await new Promise(resolve => setTimeout(resolve, 10000));
 
-  // Esperamos 5 segundos a que resolva a peticion
-  await new Promise(resolve => setTimeout(resolve, 5000));
+  const usuarioElement: ElementHandle<Element> | null = await pagina.$('#header-user-name span');
 
-  const usuarioElement = await pagina.$('#header-user-name span');
+  if (usuarioElement === null) {
+    await navegador.close();
+    return [Error.ERRORINFOUSUARIO, 'Error capturando informacion usuario'];
+  }
+
   const txtusuarioElement: string | null | undefined = await usuarioElement?.evaluate(element => element.textContent);
 
   if (txtusuarioElement === 'Anónimo' || txtusuarioElement === undefined || txtusuarioElement === null) {
-    return [Error.LOGIN, 'Login incorrecto'];
+    await navegador.close();
+    return [Error.LOGIN, 'Error no login'];
   }
 
   if (act === Accion.LOGIN) {
-    return [Error.NOERROR, 'Login correcto'];
+    await navegador.close();
+    return [Error.NOERROR, `Login correcto co usuario ${txtusuarioElement}`];
   }
 
-  // Empezamos con las gestiones de datos
+  // Vamos a entrar en la zona divs y retornar los ultimos divs marchados para descargar
 
   if (act === Accion.ULTIMOSDIVS) {
+    await navegador.close();
     return [Error.NOERROR, ''];
   }
 
+  await navegador.close();
   return [Error.NOERROR, 'd'];
 }
 
-void ovgan('', '', Accion.LOGIN);
+void (async () => {
+  const result = await ovgan('', '', Accion.LOGIN);
+  console.log(result);
+})();
