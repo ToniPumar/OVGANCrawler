@@ -20,7 +20,9 @@ enum Error {
   ERRORELEMNTOSLOGIN, // ERROR CAPTURANDO OS ELMENTOS DO LOGIN
   LOGIN, // ERRO O FACER LONGIN
   ERRORINFOUSUARIO,
-  ERRORALTANACEMENTO
+  ERRORALTANACEMENTO,
+  ERRORURLALTANACEMENTO,
+  ERRORELEMENTOSALTANACEMENTO1
 }
 
 enum URLS {
@@ -33,7 +35,7 @@ enum URLS {
 async function ovgan (user: string = '', password: string = '', act: Accion = Accion.LOGIN, dataOperacion?: string, rega?: string): Promise<[Error, string]> {
   const navegador: Browser = await puppeteer.launch({ headless: false });
   const pagina: Page = await navegador.newPage();
-  const response: HTTPResponse | null = await pagina.goto(URLS.LOGIN);
+  let response: HTTPResponse | null = await pagina.goto(URLS.LOGIN);
 
   if (response == null || response.status() !== 200) {
     return [Error.URLLOGIN, 'Error entrando en login'];
@@ -89,6 +91,32 @@ async function ovgan (user: string = '', password: string = '', act: Accion = Ac
       await navegador.close();
       return [Error.ERRORALTANACEMENTO, 'Falta de data ou REGA'];
     }
+
+    response = await pagina.goto(URLS.ALTAPORNACEMENTO);
+
+    if (response === null || response.status() !== 200) {
+      await navegador.close();
+      return [Error.ERRORURLALTANACEMENTO, 'Erro Cargando a url de alta por nacemento '];
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+    const inputdataOperacion: ElementHandle<Element> | null = await pagina.$('#fecha-nacimiento');
+    const inputRega: ElementHandle<Element> | null = await pagina.$('#codigoRegaOrigDest');
+
+    if (inputdataOperacion == null || inputRega == null) {
+      await navegador.close();
+      return [Error.ERRORELEMENTOSALTANACEMENTO1, 'Error cargando elemntos alta nacemento paxina 1'];
+    }
+
+    await inputdataOperacion.click();
+    await inputdataOperacion.type(dataOperacion ?? '');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    await inputRega.click();
+    await inputRega.type(rega ?? '');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    await pagina.keyboard.press('Tab');
+    await new Promise(resolve => setTimeout(resolve, 6000));
     await navegador.close();
     return [Error.NOERROR, 'Alta de nacemento feita'];
   }
