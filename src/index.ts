@@ -19,7 +19,8 @@ enum Error {
   URLPRINCIPAL, // ERRO NA URL PRINCIPAL
   ERRORELEMNTOSLOGIN, // ERROR CAPTURANDO OS ELMENTOS DO LOGIN
   LOGIN, // ERRO O FACER LONGIN
-  ERRORINFOUSUARIO
+  ERRORINFOUSUARIO,
+  ERRORALTANACEMENTO
 }
 
 enum URLS {
@@ -29,7 +30,7 @@ enum URLS {
   ULTIMOSDIVS = 'https://ovgan.xunta.gal/ovgan/gl/index.html#/dibs'
 }
 
-async function ovgan (user: string = '', password: string = '', act: Accion = Accion.LOGIN): Promise<[Error, string]> {
+async function ovgan (user: string = '', password: string = '', act: Accion = Accion.LOGIN, dataOperacion?: string, rega?: string): Promise<[Error, string]> {
   const navegador: Browser = await puppeteer.launch({ headless: false });
   const pagina: Page = await navegador.newPage();
   const response: HTTPResponse | null = await pagina.goto(URLS.LOGIN);
@@ -77,13 +78,20 @@ async function ovgan (user: string = '', password: string = '', act: Accion = Ac
     return [Error.NOERROR, `Login correcto co usuario ${txtusuarioElement}`];
   }
 
-  // Vamos a entrar en la zona divs y retornar los ultimos divs marchados para descargar
+  /**
+   * Vamos a empezar ca declaración de movementos, fai falta a data de saida( id = fecha-nacimiento) e o rega (id=codigoRegaOrigDest)
+   * destino na primeira pantalla cando o rega e correcto engadeselle a class ng-valid, texto explotacion destino .texto-explotacion-tipo span
+   * Na segunda pantalla fai falta o
+  */
 
-  if (act === Accion.ULTIMOSDIVS) {
+  if (act === Accion.ALTANACEMENTO) {
+    if (dataOperacion?.length === 0 || rega?.length === 0) {
+      await navegador.close();
+      return [Error.ERRORALTANACEMENTO, 'Falta de data ou REGA'];
+    }
     await navegador.close();
-    return [Error.NOERROR, ''];
+    return [Error.NOERROR, 'Alta de nacemento feita'];
   }
-
   await navegador.close();
   return [Error.NOERROR, 'd'];
 }

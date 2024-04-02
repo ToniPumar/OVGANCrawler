@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "Funciones básicas de login, altas, bajas, declaraciónes de movimientos de la web de OVGAN de la Xunta de Galicia.",
   "main": "dist/index.js",
+  "source": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel serve ./src/index.ts",
-    "compile":"tsc",
-    "build": "parcel build ./src/index.ts"
+    "start": "parcel serve",
+    "compile": "tsc",
+    "build": "parcel build"
   },
   "keywords": [
     "OVGAN"
@@ -22,7 +23,7 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.1.1",
-    "parcel-bundler": "^1.12.5",
+    "parcel": "^2.12.0",
     "typescript": "^5.4.3"
   },
   "dependencies": {
