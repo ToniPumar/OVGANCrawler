@@ -117,7 +117,23 @@ async function ovgan (user: string = '', password: string = '', act: Accion = Ac
     await inputRega.type(rega ?? '');
     await new Promise(resolve => setTimeout(resolve, 2000));
     await pagina.keyboard.press('Tab');
-    await new Promise(resolve => setTimeout(resolve, 6000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+    const spanExplotacionDestino: ElementHandle<Element> | null = await pagina.$('.texto-explotacion-tipo span');
+
+    if (spanExplotacionDestino == null) {
+      await navegador.close();
+      return [Error.ERRORELEMENTOSALTANACEMENTO1, 'Error atopando a elemento explotacion destino'];
+    }
+    const txtExplotacionDestino: string | null | undefined = await spanExplotacionDestino.evaluate(element => element.textContent);
+
+    if (txtExplotacionDestino === '-' || txtExplotacionDestino == null || txtExplotacionDestino === undefined) {
+      await navegador.close();
+      return [Error.ERRORELEMENTOSALTANACEMENTO1, 'Explotacion destino non atopada'];
+    }
+
+    console.log(txtExplotacionDestino);
+
     await navegador.close();
     return [Error.NOERROR, 'Alta de nacemento feita'];
   }
