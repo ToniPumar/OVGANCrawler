@@ -82,8 +82,9 @@ async function ovgan (user: string = '', password: string = '', act: Accion = Ac
 
   /**
    * Vamos a empezar ca declaración de movementos, fai falta a data de saida( id = fecha-nacimiento) e o rega (id=codigoRegaOrigDest)
-   * destino na primeira pantalla cando o rega e correcto engadeselle a class ng-valid, texto explotacion destino .texto-explotacion-tipo span
-   * Na segunda pantalla fai falta o
+   * destino na primeira pantalla cando o rega e correcto engadeselle a class ng-valid, texto explotacion destino .texto-explotacion-tipo span (- se non encontra)
+   * <a _ngcontent-ayy-c115="" data-toggle="tooltip" title="" data-original-title="Ir ó paso seguinte" class="ng-star-inserted"> Boton seguinte
+   * Na segunda pantalla fai falta id="crotal"
   */
 
   if (act === Accion.ALTANACEMENTO) {
